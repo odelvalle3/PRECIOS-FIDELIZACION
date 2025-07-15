@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="60">
+  <title>Precios Descuento Combustible</title>
+  <style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #037FC2; /* Azul MOEVE */
+    color: #fff;
+    font-family: sans-serif;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th, td {
+    padding: 2vw;
+    border: none;
+    text-align: center;
+  }
+
+  th {
+    font-size: 3vw;
+  }
+
+  td.precio {
+    font-size: 5vw;
+  }
+
+  img.logo {
+    max-width: 90%;
+    height: auto;
+  }
+
+  /* ✅ Eliminar borde de la celda vacía */
+  .sin-borde {
+    border: none !important;
+  }
+</style>
+
+</head>
+<body>
+  <table id="precios">
+    <thead>
+  <tr>
+    <th class="sin-borde"></th>
+    <th>Diésel</th>
+    <th>Gasolina 95</th>
+  </tr>
+</thead>
+
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const sheetID = "1NGRaP8pmCAsOmt0JcMIKFGpFHiomlDye_1AJ3C94ZlE";
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+
+    fetch(sheetURL)
+      .then(res => res.text())
+      .then(text => {
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows;
+        const tbody = document.querySelector("#precios tbody");
+
+        rows.forEach(row => {
+          const logo = row.c[3]?.v;
+          const diesel = row.c[1]?.v;
+          const gasolina = row.c[2]?.v;
+
+          const tr = document.createElement("tr");
+
+          const tdLogo = document.createElement("td");
+          const img = document.createElement("img");
+          img.src = logo;
+          img.className = "logo";
+          tdLogo.appendChild(img);
+
+          const tdDiesel = document.createElement("td");
+          tdDiesel.className = "precio";
+          tdDiesel.textContent = `${parseFloat(diesel).toFixed(2).replace('.', ',')} €/L`;
+
+
+          const tdGasolina = document.createElement("td");
+          tdGasolina.className = "precio";
+          tdGasolina.textContent = `${parseFloat(gasolina).toFixed(2).replace('.', ',')} €/L`;
+
+          tr.appendChild(tdLogo);
+          tr.appendChild(tdDiesel);
+          tr.appendChild(tdGasolina);
+
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
